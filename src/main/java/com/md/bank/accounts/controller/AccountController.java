@@ -4,6 +4,10 @@ import com.md.bank.accounts.Constant.ConstantUtils;
 import com.md.bank.accounts.dto.CustomerDTO;
 import com.md.bank.accounts.dto.ResponseDTO;
 import com.md.bank.accounts.service.IAccountService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -13,6 +17,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(
+        name = "CRUD REST APIs for Accounts in Bank",
+        description = "CRUD REST APIs in BANK to CREATE, UPDATE, FETCH AND DELETE accounts details"
+)
 @RestController
 @RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
 @AllArgsConstructor
@@ -20,6 +28,14 @@ import org.springframework.web.bind.annotation.*;
 public class AccountController {
 
     private IAccountService iAccountService;
+    @Operation(
+            summary = "Create Accounts REST API",
+            description = "REST API to create new Customer & Account inside BANK"
+    )
+    @ApiResponse(
+            responseCode = "201",
+            description = "HTTP status CREATED"
+    )
     @PostMapping("/create")
     public ResponseEntity<ResponseDTO> createAccount(@Valid @RequestBody CustomerDTO customerDTO){
         iAccountService.createAccount(customerDTO);
@@ -27,6 +43,14 @@ public class AccountController {
                 .body(new ResponseDTO(ConstantUtils.STATUS_201, ConstantUtils.MESSAGE_201));
     }
 
+    @Operation(
+            summary = "Fetch Accounts details REST API",
+            description = "REST API to fetch accounts inside BANK"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "HTTP status OK"
+    )
     @GetMapping("/fetch")
     public ResponseEntity<CustomerDTO> fetchAccountDetails(
             @RequestParam
@@ -36,6 +60,20 @@ public class AccountController {
         return ResponseEntity.status(HttpStatus.OK).body(customerDTO);
     }
 
+    @Operation(
+            summary = "Update Accounts details REST API",
+            description = "REST API to update accounts inside BANK"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP status Internal server Error"
+            )
+    })
     @PutMapping("/update")
     public ResponseEntity<ResponseDTO> updateAccountDetails(@Valid @RequestBody CustomerDTO customerDTO){
         boolean isUpdated = iAccountService.updateAccount(customerDTO);
@@ -50,6 +88,20 @@ public class AccountController {
         }
     }
 
+    @Operation(
+            summary = "Delete Accounts details REST API",
+            description = "REST API to delete accounts inside BANK"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP status Internal server Error"
+            )
+    })
     @DeleteMapping("/delete")
     public ResponseEntity<ResponseDTO> deleteAccountDetails(
             @RequestParam
